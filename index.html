@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SeedUp — Institutional Investing Engagement Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#080f1a;
+  --navy2:#0d1929;
+  --navy3:#111e30;
+  --green:#4ade80;
+  --green2:#22c55e;
+  --green3:#16a34a;
+  --green-glow:rgba(74,222,128,.15);
+  --green-dim:rgba(74,222,128,.06);
+  --white:#ffffff;
+  --off:#f0f4f0;
+  --muted:rgba(255,255,255,.5);
+  --muted2:rgba(255,255,255,.25);
+  --border:rgba(255,255,255,.08);
+  --r:12px;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'DM Sans',sans-serif;background:var(--navy);color:var(--white);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:var(--green3);border-radius:99px}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 60px;
+  background:rgba(8,15,26,.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:background .3s;
+}
+nav.scrolled{background:rgba(8,15,26,.97)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo img{width:32px;height:32px;object-fit:contain;border-radius:8px}
+.nav-logo-txt{font-size:18px;font-weight:800;color:var(--white);letter-spacing:-.3px}
+.nav-logo-txt span{color:var(--green)}
+.nav-tabs{display:flex;align-items:stretch;height:100%;gap:0}
+.nav-tab{
+  display:flex;align-items:center;
+  padding:0 22px;
+  font-size:14px;font-weight:600;
+  color:var(--muted);
+  text-decoration:none;
+  border-bottom:2px solid transparent;
+  transition:color .2s,border-color .2s;
+  cursor:pointer;
+  background:none;border-top:none;border-left:none;border-right:none;
+  font-family:inherit;white-space:nowrap;
+}
+.nav-tab:hover{color:var(--white)}
+.nav-tab.active{color:var(--green);border-bottom-color:var(--green)}
+.nav-actions{display:flex;align-items:center;gap:10px}
+.btn-ghost{
+  padding:9px 20px;border-radius:var(--r);
+  font-size:13px;font-weight:700;
+  color:var(--white);
+  border:1px solid var(--border);
+  background:transparent;
+  text-decoration:none;cursor:pointer;
+  font-family:inherit;
+  transition:border-color .2s,background .2s;
+}
+.btn-ghost:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05)}
+.btn-primary{
+  padding:9px 22px;border-radius:var(--r);
+  font-size:13px;font-weight:700;
+  color:var(--navy);
+  background:var(--green);
+  border:none;cursor:pointer;
+  font-family:inherit;text-decoration:none;
+  transition:background .2s,transform .15s;
+}
+.btn-primary:hover{background:#6ee898;transform:translateY(-1px)}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh;padding-top:68px}
+.page.active{display:block}
+
+/* ── SHARED ── */
+.section{padding:100px 60px}
+.section-inner{max-width:1100px;margin:0 auto}
+.label{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--green);background:var(--green-dim);
+  border:1px solid rgba(74,222,128,.2);
+  border-radius:99px;padding:5px 14px;margin-bottom:20px;
+}
+.label::before{content:"";width:6px;height:6px;background:var(--green);border-radius:50%}
+h1.hero-head{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(42px,5.5vw,72px);
+  font-weight:400;line-height:1.1;letter-spacing:-.02em;
+  margin-bottom:24px;
+}
+h1.hero-head em{font-style:italic;color:var(--green)}
+h2.sec-title{
+  font-family:'DM Serif Display',serif;
+  font-size:clamp(32px,3.5vw,48px);
+  font-weight:400;line-height:1.15;letter-spacing:-.02em;
+  margin-bottom:16px;
+}
+h2.sec-title em{font-style:italic;color:var(--green)}
+.sec-sub{font-size:17px;color:var(--muted);line-height:1.7;max-width:560px;margin-bottom:52px}
+.divider{height:1px;background:var(--border);margin:0 60px}
+
+/* ── HERO ── */
+.hero-section{
+  position:relative;min-height:calc(100vh - 68px);
+  display:flex;align-items:center;
+  padding:80px 60px;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 80% 60% at 60% 40%,rgba(74,222,128,.07) 0%,transparent 70%),
+             radial-gradient(ellipse 50% 40% at 80% 80%,rgba(22,163,74,.05) 0%,transparent 60%);
+}
+.hero-grid-lines{
+  position:absolute;inset:0;pointer-events:none;opacity:.04;
+  background-image:linear-gradient(var(--white) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--white) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.hero-glow{
+  position:absolute;top:20%;right:5%;
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(74,222,128,.08) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-content{position:relative;z-index:1;max-width:680px}
+.hero-sub{font-size:18px;color:var(--muted);line-height:1.7;max-width:540px;margin-bottom:40px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:64px}
+.btn-hero-primary{
+  padding:14px 32px;border-radius:var(--r);
+  font-size:15px;font-weight:700;
+  color:var(--navy);background:var(--green);
+  border:none;cursor:pointer;font-family:inherit;text-decoration:none;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 4px 24px rgba(74,222,128,.3);
+}
+.btn-hero-primary:hover{background:#6ee898;transform:translateY(-2px);box-shadow:0 8px 32px rgba(74,222,128,.4)}
+.btn-hero-ghost{
+  padding:14px 32px;border-radius:var(--r);
+  font-size:15px;font-weight:700;
+  color:var(--white);
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  text-decoration:none;cursor:pointer;font-family:inherit;
+  transition:border-color .2s,background .2s;
+}
+.btn-hero-ghost:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.08)}
+.hero-badges{display:flex;gap:24px;align-items:center}
+.hero-badge{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.hero-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* Hero visual */
+.hero-visual{
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:520px;pointer-events:none;
+  display:flex;flex-direction:column;gap:14px;
+  padding-right:60px;
+}
+.hv-card{
+  background:rgba(13,25,41,.8);
+  border:1px solid var(--border);
+  border-radius:16px;padding:20px 24px;
+  backdrop-filter:blur(20px);
+}
+.hv-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+.hv-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.hv-bar-lbl{font-size:12px;color:rgba(255,255,255,.6);width:110px;flex-shrink:0}
+.hv-bar-track{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.hv-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green3),var(--green))}
+.hv-stat-row{display:flex;gap:16px;margin-top:4px}
+.hv-stat{text-align:center}
+.hv-stat-n{font-size:22px;font-weight:800;color:var(--green)}
+.hv-stat-l{font-size:10px;color:var(--muted);margin-top:1px}
+.hv-module-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)}
+.hv-module-row:last-child{border:none}
+.hv-mod-name{font-size:12px;color:rgba(255,255,255,.7)}
+.hv-mod-status{font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px}
+.hv-mod-done{background:rgba(74,222,128,.15);color:var(--green)}
+.hv-mod-lock{background:rgba(255,255,255,.06);color:var(--muted)}
+.hv-mod-prog{background:rgba(250,204,21,.15);color:#facc15}
+
+/* ── CAPABILITIES GRID ── */
+.cap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.cap-item{
+  background:var(--navy2);padding:36px 28px;
+  transition:background .2s;
+}
+.cap-item:hover{background:var(--navy3)}
+.cap-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:var(--green-dim);border:1px solid rgba(74,222,128,.15);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;font-size:20px;
+}
+.cap-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:8px}
+.cap-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* ── WHY SEEDUP ── */
+.why-section{background:var(--navy2)}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.why-card{
+  background:var(--navy3);border:1px solid var(--border);
+  border-radius:18px;padding:36px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s,transform .2s;
+}
+.why-card:hover{border-color:rgba(74,222,128,.25);transform:translateY(-3px)}
+.why-card::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.why-card:hover::before{opacity:1}
+.why-num{font-size:48px;font-weight:800;color:rgba(74,222,128,.1);line-height:1;margin-bottom:12px}
+.why-title{font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px}
+.why-desc{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* ── PLATFORM PAGE ── */
+.platform-hero{
+  padding:100px 60px 60px;
+  position:relative;overflow:hidden;
+}
+.platform-hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 60% 70% at 80% 50%,rgba(74,222,128,.06) 0%,transparent 60%);
+}
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.platform-modules{display:flex;flex-direction:column;gap:16px}
+.pm-item{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:24px;
+  background:var(--navy2);border:1px solid var(--border);border-radius:14px;
+  transition:border-color .2s,background .2s;cursor:default;
+}
+.pm-item:hover,.pm-item.active{border-color:rgba(74,222,128,.3);background:var(--navy3)}
+.pm-item.active .pm-icon{background:var(--green-dim);border-color:rgba(74,222,128,.3)}
+.pm-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;transition:background .2s;
+}
+.pm-title{font-size:15px;font-weight:700;color:var(--white);margin-bottom:5px}
+.pm-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.pm-badge{
+  display:inline-block;font-size:10px;font-weight:700;
+  padding:2px 9px;border-radius:99px;margin-top:7px;
+  background:rgba(74,222,128,.12);color:var(--green);
+}
+
+/* Platform mockup */
+.platform-mockup{
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:20px;padding:0;overflow:hidden;
+}
+.mock-bar{
+  display:flex;align-items:center;gap:6px;
+  padding:14px 18px;border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+}
+.mock-dot{width:10px;height:10px;border-radius:50%}
+.mock-dot.r{background:#ff5f57}
+.mock-dot.y{background:#ffbd2e}
+.mock-dot.g{background:#28ca41}
+.mock-url{flex:1;background:rgba(255,255,255,.05);border-radius:5px;padding:5px 12px;font-size:11px;color:var(--muted);margin:0 10px;text-align:center}
+.mock-body{padding:24px}
+.mock-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.mock-progress-row{margin-bottom:10px}
+.mock-prog-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
+.mock-track{height:6px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+.mock-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green3),var(--green))}
+.mock-modules{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.mock-mod{
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:10px;padding:12px;text-align:center;
+}
+.mock-mod-ico{font-size:18px;margin-bottom:5px}
+.mock-mod-name{font-size:10px;color:var(--muted);font-weight:600}
+.mock-mod-status{font-size:9px;margin-top:3px;font-weight:700}
+.mock-mod-status.done{color:var(--green)}
+.mock-mod-status.lock{color:rgba(255,255,255,.2)}
+.mock-chart{
+  margin-top:16px;
+  background:rgba(255,255,255,.03);border-radius:10px;padding:14px;
+}
+.mock-chart-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.chart-svg{width:100%;height:60px}
+
+/* ── INSTITUTIONS PAGE ── */
+.inst-hero{padding:100px 60px 60px;position:relative;overflow:hidden}
+.inst-hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 70% 60% at 20% 60%,rgba(74,222,128,.07) 0%,transparent 60%);
+}
+.inst-cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:60px}
+.inst-col-card{
+  background:var(--navy2);border:1px solid var(--border);border-radius:20px;
+  padding:40px;position:relative;overflow:hidden;
+  transition:border-color .25s,transform .25s;
+}
+.inst-col-card:hover{border-color:rgba(74,222,128,.25);transform:translateY(-4px)}
+.inst-col-card::after{
+  content:"";position:absolute;bottom:0;right:0;
+  width:120px;height:120px;
+  background:radial-gradient(circle,var(--green-glow),transparent 70%);
+  border-radius:50%;opacity:0;transition:opacity .3s;
+}
+.inst-col-card:hover::after{opacity:1}
+.inst-num{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--green);margin-bottom:14px}
+.inst-title{font-size:22px;font-weight:700;color:var(--white);margin-bottom:12px;line-height:1.3}
+.inst-desc{font-size:14px;color:var(--muted);line-height:1.75}
+.inst-points{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.inst-point{display:flex;align-items:flex-start;gap:9px;font-size:13px;color:rgba(255,255,255,.7)}
+.inst-point::before{content:"→";color:var(--green);flex-shrink:0;margin-top:1px}
+.inst-cta-section{
+  margin-top:80px;
+  background:linear-gradient(135deg,rgba(22,163,74,.12),rgba(74,222,128,.06));
+  border:1px solid rgba(74,222,128,.2);border-radius:24px;padding:64px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.inst-cta-section::before{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:600px;height:300px;
+  background:radial-gradient(ellipse,rgba(74,222,128,.08),transparent 60%);
+  pointer-events:none;
+}
+.inst-cta-title{font-family:'DM Serif Display',serif;font-size:36px;font-weight:400;color:var(--white);margin-bottom:14px;position:relative;z-index:1}
+.inst-cta-sub{font-size:16px;color:var(--muted);margin-bottom:32px;position:relative;z-index:1}
+
+/* ── CONTACT PAGE ── */
+.contact-hero{padding:100px 60px 60px}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:20px}
+.contact-form-wrap{
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:20px;padding:40px;
+}
+.form-title{font-size:20px;font-weight:700;color:var(--white);margin-bottom:8px}
+.form-sub{font-size:14px;color:var(--muted);margin-bottom:28px}
+.form-row{margin-bottom:18px}
+.form-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px;display:block}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:13px 16px;font-size:14px;color:var(--white);
+  font-family:inherit;outline:none;
+  transition:border-color .2s,background .2s;
+}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--muted2)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{
+  border-color:rgba(74,222,128,.4);background:rgba(74,222,128,.04);
+}
+.form-select{cursor:pointer;appearance:none}
+.form-select option{background:var(--navy2);color:var(--white)}
+.form-textarea{resize:vertical;min-height:110px}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.contact-info{display:flex;flex-direction:column;gap:20px;padding-top:20px}
+.ci-card{
+  background:var(--navy2);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+  display:flex;gap:16px;align-items:flex-start;
+  transition:border-color .2s;
+}
+.ci-card:hover{border-color:rgba(74,222,128,.25)}
+.ci-icon{
+  width:42px;height:42px;border-radius:10px;
+  background:var(--green-dim);border:1px solid rgba(74,222,128,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.ci-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--green);margin-bottom:5px}
+.ci-val{font-size:15px;font-weight:600;color:var(--white)}
+.ci-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.ci-link{text-decoration:none;color:inherit;display:block}
+.ci-link:hover .ci-val{color:var(--green)}
+.partners-note{
+  background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);
+  border-radius:14px;padding:22px;margin-top:4px;
+  font-size:13px;color:rgba(255,255,255,.65);line-height:1.65;
+}
+.partners-note strong{color:var(--green)}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);padding:40px 60px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:16px;
+}
+.footer-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.footer-logo img{width:24px;height:24px;object-fit:contain;border-radius:6px}
+.footer-logo-txt{font-size:15px;font-weight:800;color:var(--white)}
+.footer-logo-txt span{color:var(--green)}
+.footer-center{font-size:13px;color:var(--muted);text-align:center}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--white)}
+
+/* ── REVEAL ANIMATION ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  nav{padding:0 32px}
+  .section,.hero-section,.platform-hero,.inst-hero,.contact-hero{padding-left:32px;padding-right:32px}
+  .divider{margin:0 32px}
+  footer{padding:32px}
+  .hero-visual{display:none}
+  .hero-content{max-width:100%}
+  .cap-grid{grid-template-columns:repeat(2,1fr)}
+  .why-grid,.platform-grid,.inst-cols,.contact-grid{grid-template-columns:1fr}
+  .form-2col{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  nav{padding:0 20px}
+  .nav-tab{padding:0 12px;font-size:13px}
+  .section,.hero-section{padding-left:20px;padding-right:20px;padding-top:64px;padding-bottom:64px}
+  .cap-grid{grid-template-columns:1fr}
+  h1.hero-head{font-size:36px}
+  footer{padding:24px 20px;flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo" onclick="showPage('home');return false">
+    <img src="data:image/png;base64,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" alt="SeedUp">
+    <span class="nav-logo-txt">seed<span>Up</span></span>
+  </a>
+  <div class="nav-tabs">
+    <a class="nav-tab active" data-page="home" onclick="showPage('home');return false" href="#">Home</a>
+    <a class="nav-tab" data-page="platform" onclick="showPage('platform');return false" href="#">Platform</a>
+    <a class="nav-tab" data-page="institutions" onclick="showPage('institutions');return false" href="#">For Institutions</a>
+    <a class="nav-tab" data-page="contact" onclick="showPage('contact');return false" href="#">Contact</a>
+  </div>
+  <div class="nav-actions">
+    <a class="btn-ghost" onclick="showPage('contact');return false" href="#">Contact Us</a>
+    <a class="btn-primary" onclick="showPage('contact');return false" href="#">Request Demo</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════
+     PAGE: HOME
+═══════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero-section">
+    <div class="hero-bg"></div>
+    <div class="hero-grid-lines"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-content">
+      <div class="label">Institutional Platform</div>
+      <h1 class="hero-head">Powering the Next<br><em>Generation of Investors</em></h1>
+      <p class="hero-sub">SeedUp is a gamified investing education platform designed to help users learn, practice, and understand investing through structured progression and simulation.</p>
+      <div class="hero-btns">
+        <a class="btn-hero-ghost" onclick="showPage('contact');return false" href="#">Contact Us</a>
+      </div>
+      <div class="hero-badges">
+        <div class="hero-badge"><div class="hero-badge-dot"></div>No real capital</div>
+        <div class="hero-badge"><div class="hero-badge-dot"></div>White-label ready</div>
+        <div class="hero-badge"><div class="hero-badge-dot"></div>B2B institutional</div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hv-card">
+        <div class="hv-card-title">Module Progression</div>
+        <div class="hv-bar-row"><span class="hv-bar-lbl">Intro to Investing</span><div class="hv-bar-track"><div class="hv-bar-fill" style="width:100%"></div></div></div>
+        <div class="hv-bar-row"><span class="hv-bar-lbl">Risk & Diversification</span><div class="hv-bar-track"><div class="hv-bar-fill" style="width:75%"></div></div></div>
+        <div class="hv-bar-row"><span class="hv-bar-lbl">Market Cycles</span><div class="hv-bar-track"><div class="hv-bar-fill" style="width:40%"></div></div></div>
+        <div class="hv-bar-row"><span class="hv-bar-lbl">Long-Term Strategy</span><div class="hv-bar-track"><div class="hv-bar-fill" style="width:0%"></div></div></div>
+      </div>
+      <div class="hv-card">
+        <div class="hv-card-title">Engagement Overview</div>
+        <div class="hv-stat-row">
+          <div class="hv-stat"><div class="hv-stat-n">10+</div><div class="hv-stat-l">Modules</div></div>
+          <div class="hv-stat"><div class="hv-stat-n">4</div><div class="hv-stat-l">Sim Levels</div></div>
+          <div class="hv-stat"><div class="hv-stat-n">100%</div><div class="hv-stat-l">Virtual</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- KEY CAPABILITIES -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="label">Key Capabilities</div>
+      <h2 class="sec-title">Built for <em>Institutional Scale</em></h2>
+      <p class="sec-sub">Everything your institution needs to activate, educate, and retain the next generation of investors.</p>
+      <div class="cap-grid reveal">
+        <div class="cap-item">
+          <div class="cap-icon">📚</div>
+          <div class="cap-title">Progressive Investing Modules</div>
+          <div class="cap-desc">10+ structured modules that build knowledge sequentially before unlocking simulation access.</div>
+        </div>
+        <div class="cap-item">
+          <div class="cap-icon">🔓</div>
+          <div class="cap-title">Simulation Unlock System</div>
+          <div class="cap-desc">Simulation features are gated behind knowledge validation — ensuring responsible participation.</div>
+        </div>
+        <div class="cap-item">
+          <div class="cap-icon">🏆</div>
+          <div class="cap-title">Team-Based Competition</div>
+          <div class="cap-desc">Competitive engagement framework that increases retention and drives platform activity.</div>
+        </div>
+        <div class="cap-item">
+          <div class="cap-icon">📊</div>
+          <div class="cap-title">Analytics Dashboard</div>
+          <div class="cap-desc">Institutional dashboard with behavioral insights, progression tracking, and engagement metrics.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- WHY SEEDUP -->
+  <section class="section why-section">
+    <div class="section-inner">
+      <div class="label">Why SeedUp</div>
+      <h2 class="sec-title">The Problem with<br><em>Traditional Finance Education</em></h2>
+      <p class="sec-sub">Financial institutions are losing the next generation of investors before the relationship even begins.</p>
+      <div class="why-grid">
+        <div class="why-card reveal">
+          <div class="why-num">01</div>
+          <div class="why-title">Low Engagement Among Young Investors</div>
+          <div class="why-desc">Traditional financial education fails to capture attention. Young users disengage before building any meaningful financial literacy.</div>
+        </div>
+        <div class="why-card reveal" style="transition-delay:.1s">
+          <div class="why-num">02</div>
+          <div class="why-title">Passive Learning Is Ineffective</div>
+          <div class="why-desc">Reading brochures and watching videos doesn't build real financial confidence. Action-based learning produces lasting behavioral change.</div>
+        </div>
+        <div class="why-card reveal" style="transition-delay:.15s">
+          <div class="why-num">03</div>
+          <div class="why-title">Structured Progression Before Simulation</div>
+          <div class="why-desc">SeedUp introduces a knowledge-gated model. Users earn simulation access by demonstrating real understanding — not just signing up.</div>
+        </div>
+        <div class="why-card reveal" style="transition-delay:.2s">
+          <div class="why-num">04</div>
+          <div class="why-title">Built for Institutional Deployment</div>
+          <div class="why-desc">Designed from the ground up for scalable B2B integration. White-label ready, analytics-first, and compliant with institutional standards.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════
+     PAGE: PLATFORM
+═══════════════════════════════════ -->
+<div class="page" id="page-platform">
+  <div class="platform-hero">
+    <div class="platform-hero-bg"></div>
+    <div class="section-inner">
+      <div class="label">The Product</div>
+      <h1 class="hero-head" style="font-size:clamp(36px,4.5vw,60px)">The SeedUp <em>Platform</em></h1>
+      <p class="hero-sub">A structured, four-layer engagement system designed to take users from financial novice to confident investor — at institutional scale.</p>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:40px">
+    <div class="section-inner">
+      <div class="platform-grid">
+        <div class="platform-modules">
+          <div class="pm-item active">
+            <div class="pm-icon">📖</div>
+            <div>
+              <div class="pm-title">Structured Learning Engine</div>
+              <div class="pm-desc">Progression-based financial modules that build foundational knowledge before advancing to the next level. Each module is validated before unlock.</div>
+              <div class="pm-badge">10+ Modules</div>
+            </div>
+          </div>
+          <div class="pm-item">
+            <div class="pm-icon">🔐</div>
+            <div>
+              <div class="pm-title">Simulation Access Control</div>
+              <div class="pm-desc">Simulation features unlock only after users complete and pass knowledge validation. No shortcuts — responsible participation is enforced by design.</div>
+              <div class="pm-badge">4 Progressive Levels</div>
+            </div>
+          </div>
+          <div class="pm-item">
+            <div class="pm-icon">⚡</div>
+            <div>
+              <div class="pm-title">Competitive Engagement Layer</div>
+              <div class="pm-desc">Team-based investing challenges that create social motivation. Leaderboards, rankings, and performance rewards drive sustained engagement.</div>
+              <div class="pm-badge">Team Framework</div>
+            </div>
+          </div>
+          <div class="pm-item">
+            <div class="pm-icon">📈</div>
+            <div>
+              <div class="pm-title">Institutional Analytics</div>
+              <div class="pm-desc">A dedicated dashboard giving institutions visibility into engagement metrics, module progression, behavioral insights, and cohort performance.</div>
+              <div class="pm-badge">Real-Time Data</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="platform-mockup">
+            <div class="mock-bar">
+              <div class="mock-dot r"></div>
+              <div class="mock-dot y"></div>
+              <div class="mock-dot g"></div>
+              <div class="mock-url">app.seedup.io — Analytics Dashboard</div>
+            </div>
+            <div class="mock-body">
+              <div class="mock-title">Engagement Overview</div>
+              <div class="mock-progress-row">
+                <div class="mock-prog-lbl"><span>Module Completion Rate</span><span style="color:var(--green)">74%</span></div>
+                <div class="mock-track"><div class="mock-fill" style="width:74%"></div></div>
+              </div>
+              <div class="mock-progress-row">
+                <div class="mock-prog-lbl"><span>Simulation Unlock Rate</span><span style="color:var(--green)">51%</span></div>
+                <div class="mock-track"><div class="mock-fill" style="width:51%"></div></div>
+              </div>
+              <div class="mock-progress-row">
+                <div class="mock-prog-lbl"><span>Weekly Active Users</span><span style="color:var(--green)">88%</span></div>
+                <div class="mock-track"><div class="mock-fill" style="width:88%"></div></div>
+              </div>
+              <div class="mock-modules">
+                <div class="mock-mod"><div class="mock-mod-ico">📖</div><div class="mock-mod-name">Intro</div><div class="mock-mod-status done">Complete</div></div>
+                <div class="mock-mod"><div class="mock-mod-ico">⚖️</div><div class="mock-mod-name">Risk</div><div class="mock-mod-status done">Complete</div></div>
+                <div class="mock-mod"><div class="mock-mod-ico">📉</div><div class="mock-mod-name">Cycles</div><div class="mock-mod-status lock">Locked</div></div>
+              </div>
+              <div class="mock-chart">
+                <div class="mock-chart-label">Engagement Trend — 30 Days</div>
+                <svg class="chart-svg" viewBox="0 0 300 60" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#4ade80" stop-opacity=".3"/>
+                      <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <polygon points="0,55 30,42 60,48 90,30 120,35 150,20 180,25 210,14 240,18 270,8 300,12 300,60 0,60" fill="url(#cg)"/>
+                  <polyline points="0,55 30,42 60,48 90,30 120,35 150,20 180,25 210,14 240,18 270,8 300,12" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════
+     PAGE: FOR INSTITUTIONS
+═══════════════════════════════════ -->
+<div class="page" id="page-institutions">
+  <div class="inst-hero">
+    <div class="inst-hero-bg"></div>
+    <div class="section-inner">
+      <div class="label">For Institutions</div>
+      <h1 class="hero-head" style="font-size:clamp(36px,4.5vw,60px)">Built for <em>Financial Institutions</em></h1>
+      <p class="hero-sub">SeedUp is not a consumer app. It is an institutional engagement infrastructure built to help banks, asset managers, and fintech platforms activate the next generation.</p>
+    </div>
+  </div>
+  <section class="section" style="padding-top:20px">
+    <div class="section-inner">
+      <div class="inst-cols">
+        <div class="inst-col-card reveal">
+          <div class="inst-num">01 — Client Activation</div>
+          <div class="inst-title">Increase Engagement Among Younger Demographics</div>
+          <div class="inst-desc">Young investors are the most underserved segment in financial services. SeedUp gives institutions a structured tool to reach, educate, and retain them before competitors do.</div>
+          <div class="inst-points">
+            <div class="inst-point">Structured onboarding for financial novices</div>
+            <div class="inst-point">Gamified engagement that sustains attention</div>
+            <div class="inst-point">Long-term retention through progression rewards</div>
+          </div>
+        </div>
+        <div class="inst-col-card reveal" style="transition-delay:.1s">
+          <div class="inst-num">02 — Responsible Framework</div>
+          <div class="inst-title">Education-First Model Before Simulation Exposure</div>
+          <div class="inst-desc">SeedUp enforces a knowledge-gated model. No user accesses simulation features without first completing and validating the required learning modules.</div>
+          <div class="inst-points">
+            <div class="inst-point">Module completion required before simulation</div>
+            <div class="inst-point">Knowledge validation at each progression level</div>
+            <div class="inst-point">100% virtual — no real capital involved</div>
+          </div>
+        </div>
+        <div class="inst-col-card reveal" style="transition-delay:.15s">
+          <div class="inst-num">03 — White-Label Deployment</div>
+          <div class="inst-title">Custom Branding and Integration Capabilities</div>
+          <div class="inst-desc">SeedUp deploys under your institution's brand identity. Full white-label customization, seamless integration into existing digital infrastructure.</div>
+          <div class="inst-points">
+            <div class="inst-point">Custom branding and UI configuration</div>
+            <div class="inst-point">API-ready institutional integration</div>
+            <div class="inst-point">Scalable deployment architecture</div>
+          </div>
+        </div>
+        <div class="inst-col-card reveal" style="transition-delay:.2s">
+          <div class="inst-num">04 — Data & Insights</div>
+          <div class="inst-title">Measure Engagement, Progression, and Behavior</div>
+          <div class="inst-desc">Institutions receive access to a dedicated analytics dashboard with real-time data on module completion, simulation activity, and user engagement patterns.</div>
+          <div class="inst-points">
+            <div class="inst-point">Real-time engagement metrics</div>
+            <div class="inst-point">Behavioral progression insights</div>
+            <div class="inst-point">Cohort-level performance tracking</div>
+          </div>
+        </div>
+      </div>
+      <div class="inst-cta-section reveal">
+        <div class="label" style="margin-bottom:16px;justify-content:center">Ready to Deploy</div>
+        <div class="inst-cta-title">Request an Institutional Demo</div>
+        <div class="inst-cta-sub">See how SeedUp integrates with your platform and activates your next generation of investors.</div>
+        <a class="btn-hero-primary" onclick="showPage('contact');return false" href="#">Request Institutional Demo</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════
+     PAGE: CONTACT
+═══════════════════════════════════ -->
+<div class="page" id="page-contact">
+  <div class="contact-hero">
+    <div class="section-inner">
+      <div class="label">Get in Touch</div>
+      <h1 class="hero-head" style="font-size:clamp(36px,4.5vw,56px)">Let's Build<br><em>Something Together</em></h1>
+      <p class="hero-sub">Whether you're a bank, asset manager, or fintech platform — we'd love to show you how SeedUp works.</p>
+      <div class="contact-grid">
+        <div class="contact-form-wrap">
+          <div class="form-title">Request a Demo</div>
+          <div class="form-sub">Fill in your details and we'll get back to you within 48 hours.</div>
+          <form action="https://formspree.io/f/xdalbele" method="POST" onsubmit="handleForm(event)">
+            <div class="form-2col">
+              <div class="form-row">
+                <label class="form-label">First Name</label>
+                <input class="form-input" type="text" placeholder="John">
+              </div>
+              <div class="form-row">
+                <label class="form-label">Last Name</label>
+                <input class="form-input" type="text" placeholder="Smith">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Institution</label>
+              <input class="form-input" type="text" placeholder="Your bank or organization">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Work Email</label>
+              <input class="form-input" type="email" placeholder="john@institution.com">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Institution Type</label>
+              <select class="form-select form-input">
+                <option value="">Select type...</option>
+                <option>Bank</option>
+                <option>Asset Manager</option>
+                <option>Fintech Platform</option>
+                <option>Credit Union</option>
+                <option>Other Financial Institution</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Message (optional)</label>
+              <textarea class="form-textarea" placeholder="Tell us about your institution and goals..."></textarea>
+            </div>
+            <button type="submit" class="btn-hero-primary" style="width:100%;justify-content:center;display:flex">Send Request</button>
+          </form>
+          <div id="form-success" style="display:none;margin-top:16px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);border-radius:10px;padding:16px;font-size:14px;color:var(--green);text-align:center">
+            ✓ Thank you! We'll be in touch within 48 hours.
+          </div>
+        </div>
+        <div class="contact-info">
+          <a class="ci-link" href="mailto:contact@seedupapp.com">
+            <div class="ci-card">
+              <div class="ci-icon">&#x2709;&#xFE0F;</div>
+              <div>
+                <div class="ci-label">Email</div>
+                <div class="ci-val">contact@seedupapp.com</div>
+                <div class="ci-sub">Institutional inquiries welcome</div>
+              </div>
+            </div>
+          </a>
+          <a class="ci-link" href="https://www.linkedin.com/company/seedupofficial/?viewAsMember=true" target="_blank">
+            <div class="ci-card">
+              <div class="ci-icon">💼</div>
+              <div>
+                <div class="ci-label">LinkedIn</div>
+                <div class="ci-val">SeedUp Official</div>
+                <div class="ci-sub">linkedin.com/company/seedupofficial</div>
+              </div>
+            </div>
+          </a>
+          <a class="ci-link" href="https://instagram.com/seedupco" target="_blank">
+            <div class="ci-card">
+              <div class="ci-icon">📸</div>
+              <div>
+                <div class="ci-label">Instagram</div>
+                <div class="ci-val">@seedupco</div>
+                <div class="ci-sub">Follow us on Instagram</div>
+              </div>
+            </div>
+          </a>
+          <div class="partners-note">
+            <strong>For institutions:</strong> SeedUp is not a brokerage and does not handle real capital. All simulation activity is virtual and designed exclusively for educational engagement purposes.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="#" class="footer-logo" onclick="showPage('home');return false">
+    <img src="data:image/png;base64,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" alt="SeedUp">
+    <span class="footer-logo-txt">seed<span>Up</span></span>
+  </a>
+  <div class="footer-center">SeedUp &copy; 2026 &mdash; All rights reserved</div>
+  <div class="footer-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms</a>
+  </div>
+</footer>
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  var pg=document.getElementById('page-'+id);
+  if(pg){pg.classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+  document.querySelectorAll('.nav-tab').forEach(function(t){
+    t.classList.toggle('active',t.getAttribute('data-page')===id);
+  });
+  triggerReveal();
+}
+window.addEventListener('scroll',function(){
+  document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>20);
+});
+function triggerReveal(){
+  setTimeout(function(){
+    document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('visible');});
+  },100);
+}
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(function(el){observer.observe(el);});
+document.querySelectorAll('.pm-item').forEach(function(item){
+  item.addEventListener('click',function(){
+    document.querySelectorAll('.pm-item').forEach(function(i){i.classList.remove('active');});
+    this.classList.add('active');
+  });
+});
+function handleForm(e){
+  e.preventDefault();
+  var form=e.target;
+  var btn=form.querySelector('button[type="submit"]');
+  btn.textContent='Sending...';
+  btn.style.opacity='.7';
+  btn.disabled=true;
+  fetch('https://formspree.io/f/xdalbele',{
+    method:'POST',
+    body:new FormData(form),
+    headers:{'Accept':'application/json'}
+  }).then(function(r){
+    if(r.ok){
+      document.getElementById('form-success').style.display='block';
+      form.reset();
+      btn.textContent='Send Request';
+      btn.style.opacity='1';
+      btn.disabled=false;
+    } else {
+      btn.textContent='Error - try again';
+      btn.style.opacity='1';
+      btn.disabled=false;
+    }
+  }).catch(function(){
+    btn.textContent='Error - try again';
+    btn.style.opacity='1';
+    btn.disabled=false;
+  });
+}
+triggerReveal();
+</script>
+</body>
+</html>
